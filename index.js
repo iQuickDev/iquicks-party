@@ -3,6 +3,7 @@ import fastifyStatic from '@fastify/static';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes } from 'crypto';
+import fs from 'fs';
 import dotenv from 'dotenv';
 import db, { initDb } from './db.js';
 
@@ -11,9 +12,25 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const fastify = Fastify({
-  logger: true
-});
+// Build Fastify options and enable HTTPS if SSL paths provided in .env
+const sslKeyPath = process.env.SSL_KEY_PATH;
+const sslCertPath = process.env.SSL_CERT_PATH;
+
+const fastifyOptions = { logger: true };
+if (sslKeyPath && sslCertPath) {
+  try {
+    fastifyOptions.https = {
+      key: fs.readFileSync(sslKeyPath),
+      cert: fs.readFileSync(sslCertPath),
+      allowHTTP1: true
+    };
+    console.log('Avviando con HTTPS usando i certificati:', sslKeyPath, sslCertPath);
+  } catch (err) {
+    console.error('Impossibile leggere i file SSL:', err.message);
+  }
+}
+
+const fastify = Fastify(fastifyOptions);
 
 // Admin password from .env
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
@@ -215,8 +232,13 @@ fastify.get('/api/admin/invites', async (request, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ host: '0.0.0.0', port: 8080 });
-    console.log('Server in esecuzione su http://localhost:8080');
+    const port = process.env.PORT ? Number(process.env.PORT) : 8080;
+    const host = '0.0.0.0';
+    await fastify.listen({ host, port });
+
+    const protocol = fastifyOptions.https ? 'https' : 'http';
+    const domain = process.env.DOMAIN || 'localhost';
+    console.log(`Server in esecuzione su ${protocol}://${domain}:${port}`);
   } catch (err) {
     fastify.log.error('Errore nell\'avvio del server:', err);
     process.exit(1);
