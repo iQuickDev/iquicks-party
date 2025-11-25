@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Festino iQuick</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #0f3460;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .welcome-section {
+            display: none;
+            text-align: center;
+        }
+
+        .welcome-section h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .event-info {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .event-info p {
+            margin: 8px 0;
+            color: #b0b0b0;
+        }
+
+        .questions-section {
+            display: none;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .question.active {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question h3 {
+            margin-bottom: 15px;
+            color: #e0e0e0;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .yes-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .yes-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .no-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .no-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .code-input-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .code-input-group input {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+
+        .code-input-group input::placeholder {
+            color: #888;
+        }
+
+        .code-input-group button {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .code-input-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            background-color: #3d1f1f;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success {
+            background-color: #1e4620;
+            color: #7cfc00;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+            border-left: 4px solid #28a745;
+        }
+
+        .invite-code-input {
+            display: block;
+        }
+
+        .invite-code-input h2 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .invite-code-input p {
+            color: #b0b0b0;
+        }
+
+        .progress {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .submit-section {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            background-color: #007bff !important;
+            width: 100%;
+            padding: 14px !important;
+            font-size: 18px !important;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3 !important;
+        }
+
+        .welcome-section {
+            color: #ffffff;
+        }
+
+        .stats-box {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="errorMsg" class="error"></div>
+        <div id="successMsg" class="success"></div>
+
+        <!-- Code Input Section -->
+        <div class="invite-code-input">
+            <h2>🎉 Festino iQuick 2° Edizione</h2>
+            <p style="margin: 15px 0;">Per confermare la tua partecipazione, inserisci il codice di invito</p>
+            <div class="code-input-group">
+                <input type="text" id="inviteCode" placeholder="Inserisci il codice di invito" maxlength="20">
+                <button onclick="validateInvite()">Accedi</button>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="welcome-section" id="welcomeSection">
+            <h1>🎉 Festino iQuick 2° Edizione</h1>
+            <h2>Sei stato invitato!</h2>
+            <p style="margin: 10px;">Ciao <span id="guestName"></span></p>
+            <div class="event-info">
+                <p><strong>📅 Data:</strong> 6 dicembre 2025</p>
+                <p><strong>⏰ Orario:</strong> 21:00 - finchè reggiamo</p>
+                <p style="margin-top: 15px; font-size: 0.9em; color: #999;">Rispondi alle domande sottostanti</p>
+            </div>
+            <div class="stats-box" id="statsBox">
+                <p style="color: #b0b0b0; margin: 0; font-size: 12px;">Partecipanti</p>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-number" id="statParticipating">-</div>
+                        <div class="stat-label">Confermati</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="statInvited">-</div>
+                        <div class="stat-label">Invitati</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="statPending">-</div>
+                        <div class="stat-label">In Sospeso</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Section -->
+        <div class="questions-section" id="questionsSection">
+            <div class="progress" id="progress"></div>
+
+            <div class="question" id="q1">
+                <h3>Vuoi partecipare?</h3>
+                <div class="button-group">
+                    <button class="yes-btn" onclick="answerQuestion('participating', true)">Sì</button>
+                    <button class="no-btn" onclick="answerQuestion('participating', false)">No</button>
+                </div>
+            </div>
+
+            <div class="question" id="q2">
+                <h3>Vuoi il rosmarino? <span style="font-size: 0.8em; color: #999;">(costo aggiuntivo)</span></h3>
+                <div class="button-group">
+                    <button class="yes-btn" onclick="answerQuestion('rosmarino', true)">Sì</button>
+                    <button class="no-btn" onclick="answerQuestion('rosmarino', false)">No</button>
+                </div>
+            </div>
+
+            <div class="question" id="q3">
+                <h3>Vuoi mangiare? <span style="font-size: 0.8em; color: #999;">(costo aggiuntivo)</span></h3>
+                <div class="button-group">
+                    <button class="yes-btn" onclick="answerQuestion('eating', true)">Sì</button>
+                    <button class="no-btn" onclick="answerQuestion('eating', false)">No</button>
+                </div>
+            </div>
+
+            <div class="question" id="q4">
+                <h3>Vuoi bere alcol? <span style="font-size: 0.8em; color: #999;">(costo aggiuntivo)</span></h3>
+                <div class="button-group">
+                    <button class="yes-btn" onclick="answerQuestion('alcohol', true)">Sì</button>
+                    <button class="no-btn" onclick="answerQuestion('alcohol', false)">No</button>
+                </div>
+            </div>
+
+            <div class="submit-section" id="submitSection">
+                <button class="submit-btn" onclick="submitResponse()">Invia Risposta</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const responses = {};
+        const questions = ['participating', 'rosmarino', 'eating', 'alcohol'];
+        let currentQuestion = 0;
+        let inviteCode = null;
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // Check for invite code in URL parameters on page load
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            const codeFromUrl = params.get('invite');
+            if (codeFromUrl) {
+                document.getElementById('inviteCode').value = codeFromUrl;
+                validateInvite();
+            }
+        });
+
+        async function validateInvite() {
+            const code = document.getElementById('inviteCode').value.trim();
+            if (!code) {
+                showError('Inserisci il codice di invito');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/invite/${code}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    inviteCode = code;
+                    document.getElementById('guestName').textContent = data.name || data.email;
+                    document.querySelector('.invite-code-input').style.display = 'none';
+                    document.getElementById('welcomeSection').style.display = 'block';
+                    document.getElementById('questionsSection').style.display = 'block';
+                    loadStats();
+                    setTimeout(() => showQuestion(0), 500);
+                } else {
+                    showError(data.error || 'Codice di invito non valido');
+                }
+            } catch (err) {
+                showError('Errore: ' + err.message);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('statParticipating').textContent = data.participating;
+                    document.getElementById('statInvited').textContent = data.total_invites;
+                    document.getElementById('statPending').textContent = data.pending;
+                }
+            } catch (err) {
+                console.error('Error loading stats:', err);
+            }
+        }
+
+        function showQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+
+            // Hide previous questions
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+
+            // Show current question
+            currentQuestion = index;
+            document.getElementById('q' + (index + 1)).classList.add('active');
+
+            // Update progress
+            document.getElementById('progress').textContent = `Domanda ${index + 1} di ${questions.length}`;
+
+            // Show submit button only if on last question AND all questions are answered
+            if (index === questions.length - 1) {
+                updateSubmitButtonVisibility();
+            } else {
+                document.getElementById('submitSection').style.display = 'none';
+            }
+        }
+
+        function updateSubmitButtonVisibility() {
+            // Check if all questions have been answered
+            const allAnswered = questions.every(q => responses.hasOwnProperty(q));
+            document.getElementById('submitSection').style.display = allAnswered ? 'block' : 'none';
+        }
+
+        function answerQuestion(question, answer) {
+            responses[question] = answer;
+            
+            // If first question (participating) is answered "No", fill all others with "No" and submit
+            if (question === 'participating' && answer === false) {
+                responses['rosmarino'] = false;
+                responses['eating'] = false;
+                responses['alcohol'] = false;
+                // Submit immediately
+                setTimeout(() => submitResponse(), 300);
+                return;
+            }
+            
+            // If on last question, check if all are answered and update submit button visibility
+            if (currentQuestion === questions.length - 1) {
+                updateSubmitButtonVisibility();
+            }
+            
+            // Move to next question if not the last one
+            if (currentQuestion < questions.length - 1) {
+                showQuestion(currentQuestion + 1);
+            }
+        }
+
+        async function submitResponse() {
+            try {
+                const response = await fetch(`/api/invite/${inviteCode}/response`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(responses)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showSuccess('✅ Risposta inviata con successo!');
+                    setTimeout(() => {
+                        document.getElementById('questionsSection').style.display = 'none';
+                        document.getElementById('welcomeSection').innerHTML = '<h1>✅ Grazie!</h1><p>La tua risposta è stata registrata 🎉</p>';
+                        document.getElementById('welcomeSection').style.display = 'block';
+                    }, 1000);
+                } else {
+                    showError(data.error || 'Errore durante l\'invio');
+                }
+            } catch (err) {
+                showError('Errore: ' + err.message);
+            }
+        }
+
+        // Allow Enter key to validate invite code
+        document.getElementById('inviteCode').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') validateInvite();
+        });
+    </script>
+</body>
+
+</html>

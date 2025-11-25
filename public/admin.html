@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pannello Admin - Festino iQuick</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #e0e0e0;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            color: #b0b0b0;
+            font-size: 1.3em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            min-width: 100px;
+            color: #d0d0d0;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            flex: 1;
+            font-size: 14px;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+        }
+
+        input::placeholder {
+            color: #888;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+            color: #e0e0e0;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #353535;
+        }
+
+        .success {
+            background-color: #1e4620;
+            color: #7cfc00;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+            border-left: 4px solid #28a745;
+        }
+
+        .error {
+            background-color: #3d1f1f;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+            border-left: 4px solid #dc3545;
+        }
+
+        .invite-code {
+            font-weight: bold;
+            color: #00d4ff;
+            font-family: monospace;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .status-pending {
+            background-color: #4d3d00;
+            color: #ffeb3b;
+        }
+
+        .status-responded {
+            background-color: #1e4620;
+            color: #7cfc00;
+        }
+
+        .yes {
+            color: #7cfc00;
+            font-weight: bold;
+        }
+
+        .no {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎉 Pannello Admin - Festino iQuick</h1>
+
+        <!-- Login Section -->
+        <div class="section" id="loginSection">
+            <h2>Accesso Admin</h2>
+            <div id="loginError" class="error"></div>
+            <div class="form-group">
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" placeholder="Inserisci password admin">
+            </div>
+            <button onclick="adminLogin()">Accedi</button>
+        </div>
+
+        <!-- Admin Dashboard (Hidden until login) -->
+        <div id="adminDashboard" style="display: none;">
+            <div class="section">
+                <h2>Crea Nuovo Invito</h2>
+                <div id="createSuccess" class="success">Invito creato con successo!</div>
+                <div id="createError" class="error"></div>
+                <div class="form-group">
+                    <label for="name">Nome:</label>
+                    <input type="text" id="name" placeholder="Nome ospite">
+                </div>
+                <button onclick="createInvite()">Genera Invito</button>
+            </div>
+
+            <div class="section">
+                <h2>Inviti e Risposte</h2>
+                <div id="invitesContainer" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Codice Invito</th>
+                                <th>Link</th>
+                                <th>Stato</th>
+                                <th>Partecipa</th>
+                                <th>Rosmarino</th>
+                                <th>Cibo</th>
+                                <th>Alcol</th>
+                                <th>Inviato</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invitesTable">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #999;">Caricamento...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button onclick="logout()" style="margin-top: 20px; background-color: #dc3545;">Esci</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let adminPassword = null;
+
+        async function adminLogin() {
+            const password = document.getElementById('adminPassword').value.trim();
+            const errorEl = document.getElementById('loginError');
+
+            if (!password) {
+                errorEl.textContent = 'Password richiesta';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    adminPassword = password;
+                    localStorage.setItem('adminPassword', password);
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('adminDashboard').style.display = 'block';
+                    loadInvites();
+                } else {
+                    errorEl.textContent = data.error || 'Accesso fallito';
+                    errorEl.style.display = 'block';
+                }
+            } catch (err) {
+                errorEl.textContent = 'Errore: ' + err.message;
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            adminPassword = null;
+            localStorage.removeItem('adminPassword');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminDashboard').style.display = 'none';
+        }
+
+        async function createInvite() {
+            if (!adminPassword) {
+                alert('Non autenticato');
+                return;
+            }
+
+            const name = document.getElementById('name').value.trim();
+            const successEl = document.getElementById('createSuccess');
+            const errorEl = document.getElementById('createError');
+
+            if (!name) {
+                errorEl.textContent = 'Nome richiesto';
+                errorEl.style.display = 'block';
+                successEl.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/create-invite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-password': adminPassword
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successEl.textContent = `Invito creato! Codice: ${data.code}`;
+                    successEl.style.display = 'block';
+                    errorEl.style.display = 'none';
+                    document.getElementById('name').value = '';
+                    loadInvites();
+                } else {
+                    errorEl.textContent = data.error || 'Errore nella creazione dell\'invito';
+                    errorEl.style.display = 'block';
+                    successEl.style.display = 'none';
+                }
+            } catch (err) {
+                errorEl.textContent = 'Errore: ' + err.message;
+                errorEl.style.display = 'block';
+                successEl.style.display = 'none';
+            }
+        }
+
+        async function loadInvites() {
+            if (!adminPassword) return;
+
+            try {
+                const response = await fetch('/api/admin/invites', {
+                    headers: { 'x-admin-password': adminPassword }
+                });
+                const data = await response.json();
+                const table = document.getElementById('invitesTable');
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    table.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">Nessun invito ancora</td></tr>';
+                    return;
+                }
+
+                table.innerHTML = data.map(row => `
+                    <tr>
+                        <td>${row.name || '-'}</td>
+                        <td><span class="invite-code">${row.code}</span></td>
+                        <td><button onclick="copyInviteLink('${row.code}')" style="padding: 5px 10px; font-size: 12px;">Copia Link</button></td>
+                        <td><span class="status status-${row.status}">${row.status === 'pending' ? 'IN SOSPESO' : 'RISPOSTO'}</span></td>
+                        <td>${row.response_id ? (row.participating ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
+                        <td>${row.response_id ? (row.rosmarino ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
+                        <td>${row.response_id ? (row.eating ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
+                        <td>${row.response_id ? (row.alcohol ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
+                        <td>${row.submitted_at ? new Date(row.submitted_at).toLocaleString('it-IT') : '-'}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading invites:', err);
+            }
+        }
+
+        function copyInviteLink(code) {
+            const link = `${window.location.origin}/?invite=${code}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Link copiato negli appunti!');
+            }).catch(err => {
+                alert('Errore nel copiare il link: ' + err);
+            });
+        }
+
+        // Allow Enter key to login
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') adminLogin();
+        });
+
+        // Check for saved session on page load
+        window.addEventListener('load', () => {
+            const savedPassword = localStorage.getItem('adminPassword');
+            if (savedPassword) {
+                adminPassword = savedPassword;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                loadInvites();
+            }
+
+            // Load invites every 5 seconds if logged in
+            setInterval(() => {
+                if (adminPassword) loadInvites();
+            }, 5000);
+        });
+    </script>
+</body>
+
+</html>
