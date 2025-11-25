@@ -215,7 +215,7 @@ fastify.get('/api/admin/invites', async (request, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 8080 });
+    await fastify.listen({ host: '0.0.0.0', port: 8080 });
     console.log('Server in esecuzione su http://localhost:8080');
   } catch (err) {
     fastify.log.error('Errore nell\'avvio del server:', err);
