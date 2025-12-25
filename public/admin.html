@@ -398,7 +398,7 @@
                         <td>${row.response_id ? (row.rosmarino ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
                         <td>${row.response_id ? (row.eating ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
                         <td>${row.response_id ? (row.alcohol ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
-                        <td>${row.submitted_at ? new Date(row.submitted_at).toLocaleString('it-IT') : '-'}</td>
+                        <td>${row.submitted_at ? new Date(row.submitted_at).toLocaleString('it-IT', { timeZone: 'Europe/Rome' }) : '-'}</td>
                     </tr>
                 `).join('');
             } catch (err) {
