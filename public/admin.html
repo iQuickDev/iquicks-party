@@ -247,10 +247,10 @@
                                 <th>Codice Invito</th>
                                 <th>Link</th>
                                 <th>Stato</th>
-                                <th>Partecipa</th>
-                                <th>Rosmarino</th>
-                                <th>Cibo</th>
-                                <th>Alcol</th>
+                                <th>Partecipa <span id="participatingCount" class="yes">(0)</span></th>
+                                <th>Rosmarino <span id="rosmarinoCount" class="yes">(0)</span></th>
+                                <th>Cibo <span id="eatingCount" class="yes">(0)</span></th>
+                                <th>Alcol <span id="alcoholCount" class="yes">(0)</span></th>
                                 <th>Inviato</th>
                             </tr>
                         </thead>
@@ -371,8 +371,22 @@
 
                 if (!Array.isArray(data) || data.length === 0) {
                     table.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">Nessun invito ancora</td></tr>';
+                    updateCounters(0, 0, 0, 0);
                     return;
                 }
+
+                // Calculate counters
+                let participatingCount = 0, rosmarinoCount = 0, eatingCount = 0, alcoholCount = 0;
+                data.forEach(row => {
+                    if (row.response_id) {
+                        if (row.participating) participatingCount++;
+                        if (row.rosmarino) rosmarinoCount++;
+                        if (row.eating) eatingCount++;
+                        if (row.alcohol) alcoholCount++;
+                    }
+                });
+
+                updateCounters(participatingCount, rosmarinoCount, eatingCount, alcoholCount);
 
                 table.innerHTML = data.map(row => `
                     <tr>
@@ -390,6 +404,13 @@
             } catch (err) {
                 console.error('Error loading invites:', err);
             }
+        }
+
+        function updateCounters(participating, rosmarino, eating, alcohol) {
+            document.getElementById('participatingCount').textContent = `(${participating})`;
+            document.getElementById('rosmarinoCount').textContent = `(${rosmarino})`;
+            document.getElementById('eatingCount').textContent = `(${eating})`;
+            document.getElementById('alcoholCount').textContent = `(${alcohol})`;
         }
 
         function copyInviteLink(code) {
