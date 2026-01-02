@@ -4,214 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pannello Admin - Capodanno Marco</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            padding: 10px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        h1 {
-            margin-bottom: 30px;
-            color: #e0e0e0;
-        }
-
-        .section {
-            margin-bottom: 40px;
-        }
-
-        .section h2 {
-            margin-bottom: 20px;
-            color: #b0b0b0;
-            font-size: 1.3em;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        label {
-            font-weight: bold;
-            min-width: 100px;
-            color: #d0d0d0;
-        }
-
-        input {
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            flex: 1;
-            font-size: 14px;
-            background-color: #3a3a3a;
-            color: #e0e0e0;
-        }
-
-        input::placeholder {
-            color: #888;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #444;
-            color: #e0e0e0;
-        }
-
-        th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-
-        tr:hover {
-            background-color: #353535;
-        }
-
-        .success {
-            background-color: #1e4620;
-            color: #7cfc00;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-            border-left: 4px solid #28a745;
-        }
-
-        .error {
-            background-color: #3d1f1f;
-            color: #ff6b6b;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-            border-left: 4px solid #dc3545;
-        }
-
-        .invite-code {
-            font-weight: bold;
-            color: #00d4ff;
-            font-family: monospace;
-        }
-
-        .status {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        .status-pending {
-            background-color: #4d3d00;
-            color: #ffeb3b;
-        }
-
-        .status-responded {
-            background-color: #1e4620;
-            color: #7cfc00;
-        }
-
-        .yes {
-            color: #7cfc00;
-            font-weight: bold;
-        }
-
-        .no {
-            color: #ff6b6b;
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 1.5em;
-                text-align: center;
-            }
-            
-            .form-group {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 5px;
-            }
-            
-            label {
-                min-width: auto;
-                margin-bottom: 5px;
-            }
-            
-            table {
-                font-size: 12px;
-            }
-            
-            th, td {
-                padding: 8px 4px;
-                word-break: break-word;
-            }
-            
-            .invite-code {
-                font-size: 10px;
-            }
-            
-            button {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-        }
-    </style>
+    <title>Pannello Admin - Party Legacy</title>
+    <link rel="stylesheet" href="admin.css">
 </head>
 
 <body>
     <div class="container">
-        <h1>🎉 Pannello Admin - Capodanno Marco</h1>
+        <div class="header">
+            <h1>🎉 Pannello Admin - Party Legacy</h1>
+            <button id="logoutBtn" onclick="logout()" class="logout-btn" style="display: none;">Esci</button>
+        </div>
 
         <!-- Login Section -->
         <div class="section" id="loginSection">
@@ -226,6 +28,53 @@
 
         <!-- Admin Dashboard (Hidden until login) -->
         <div id="adminDashboard" style="display: none;">
+            <div class="section">
+                <h2>Configurazione Evento</h2>
+                <div id="configSuccess" class="success">Configurazione salvata!</div>
+                <div id="configError" class="error"></div>
+                <div class="form-group">
+                    <label for="eventName">Nome Evento:</label>
+                    <input type="text" id="eventName" placeholder="Nome dell'evento">
+                </div>
+                <div class="form-group">
+                    <label for="eventTime">Data e Ora:</label>
+                    <input type="datetime-local" id="eventTime">
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">Luogo:</label>
+                    <input type="text" id="eventLocation" placeholder="Indirizzo dell'evento">
+                </div>
+                <div class="form-group">
+                    <label>Servizi Disponibili:</label>
+                    <div class="services-grid">
+                        <label class="service-checkbox">
+                            <input type="checkbox" id="serviceFood" checked>
+                            <span class="checkmark"></span>
+                            <span class="service-text">🍽️ Cibo</span>
+                        </label>
+                        <label class="service-checkbox">
+                            <input type="checkbox" id="serviceSleep" checked>
+                            <span class="checkmark"></span>
+                            <span class="service-text">🛏️ Dormire</span>
+                        </label>
+                        <label class="service-checkbox">
+                            <input type="checkbox" id="serviceRosmarino" checked>
+                            <span class="checkmark"></span>
+                            <span class="service-text">🌿 Rosmarino</span>
+                        </label>
+                        <label class="service-checkbox">
+                            <input type="checkbox" id="serviceAlcohol" checked>
+                            <span class="checkmark"></span>
+                            <span class="service-text">🍷 Alcol</span>
+                        </label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <button onclick="saveConfig()">Salva Configurazione</button>
+                    <button onclick="resetEvent()" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);">Reset Evento</button>
+                </div>
+            </div>
+
             <div class="section">
                 <h2>Crea Nuovo Invito</h2>
                 <div id="createSuccess" class="success">Invito creato con successo!</div>
@@ -244,205 +93,35 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Codice Invito</th>
-                                <th>Link</th>
+                                <th>Codice</th>
                                 <th>Stato</th>
-                                <th>Partecipa <span id="participatingCount" class="yes">(0)</span></th>
-                                <th>Rosmarino <span id="rosmarinoCount" class="yes">(0)</span></th>
-                                <th>Cibo <span id="eatingCount" class="yes">(0)</span></th>
-                                <th>Alcol <span id="alcoholCount" class="yes">(0)</span></th>
+                                <th>Partecipa <span id="participatingCount" class="icon icon-yes">(0)</span></th>
+                                <th>Rosmarino <span id="rosmarinoCount" class="icon icon-yes">(0)</span></th>
+                                <th>Cibo <span id="eatingCount" class="icon icon-yes">(0)</span></th>
+                                <th>Alcol <span id="alcoholCount" class="icon icon-yes">(0)</span></th>
+                                <th>Dormire <span id="sleepCount" class="icon icon-yes">(0)</span></th>
                                 <th>Inviato</th>
+                                <th>Azioni</th>
                             </tr>
                         </thead>
                         <tbody id="invitesTable">
                             <tr>
-                                <td colspan="8" style="text-align: center; color: #999;">Caricamento...</td>
+                                <td colspan="10" style="text-align: center; color: #999;">Caricamento...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <button onclick="logout()" style="margin-top: 20px; background-color: #dc3545;">Esci</button>
+            </div>
+
+            <div id="mobileLogout" class="mobile-logout">
+                <button onclick="logout()" class="logout-btn">Esci</button>
             </div>
         </div>
     </div>
 
-    <script>
-        let adminPassword = null;
+    <div id="copyFeedback" class="copy-feedback"></div>
 
-        async function adminLogin() {
-            const password = document.getElementById('adminPassword').value.trim();
-            const errorEl = document.getElementById('loginError');
-
-            if (!password) {
-                errorEl.textContent = 'Password richiesta';
-                errorEl.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    adminPassword = password;
-                    localStorage.setItem('adminPassword', password);
-                    document.getElementById('loginSection').style.display = 'none';
-                    document.getElementById('adminDashboard').style.display = 'block';
-                    loadInvites();
-                } else {
-                    errorEl.textContent = data.error || 'Accesso fallito';
-                    errorEl.style.display = 'block';
-                }
-            } catch (err) {
-                errorEl.textContent = 'Errore: ' + err.message;
-                errorEl.style.display = 'block';
-            }
-        }
-
-        function logout() {
-            adminPassword = null;
-            localStorage.removeItem('adminPassword');
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('adminDashboard').style.display = 'none';
-        }
-
-        async function createInvite() {
-            if (!adminPassword) {
-                alert('Non autenticato');
-                return;
-            }
-
-            const name = document.getElementById('name').value.trim();
-            const successEl = document.getElementById('createSuccess');
-            const errorEl = document.getElementById('createError');
-
-            if (!name) {
-                errorEl.textContent = 'Nome richiesto';
-                errorEl.style.display = 'block';
-                successEl.style.display = 'none';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/admin/create-invite', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-admin-password': adminPassword
-                    },
-                    body: JSON.stringify({ name })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    successEl.textContent = `Invito creato! Codice: ${data.code}`;
-                    successEl.style.display = 'block';
-                    errorEl.style.display = 'none';
-                    document.getElementById('name').value = '';
-                    loadInvites();
-                } else {
-                    errorEl.textContent = data.error || 'Errore nella creazione dell\'invito';
-                    errorEl.style.display = 'block';
-                    successEl.style.display = 'none';
-                }
-            } catch (err) {
-                errorEl.textContent = 'Errore: ' + err.message;
-                errorEl.style.display = 'block';
-                successEl.style.display = 'none';
-            }
-        }
-
-        async function loadInvites() {
-            if (!adminPassword) return;
-
-            try {
-                const response = await fetch('/api/admin/invites', {
-                    headers: { 'x-admin-password': adminPassword }
-                });
-                const data = await response.json();
-                const table = document.getElementById('invitesTable');
-
-                if (!Array.isArray(data) || data.length === 0) {
-                    table.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">Nessun invito ancora</td></tr>';
-                    updateCounters(0, 0, 0, 0);
-                    return;
-                }
-
-                // Calculate counters
-                let participatingCount = 0, rosmarinoCount = 0, eatingCount = 0, alcoholCount = 0;
-                data.forEach(row => {
-                    if (row.response_id) {
-                        if (row.participating) participatingCount++;
-                        if (row.rosmarino) rosmarinoCount++;
-                        if (row.eating) eatingCount++;
-                        if (row.alcohol) alcoholCount++;
-                    }
-                });
-
-                updateCounters(participatingCount, rosmarinoCount, eatingCount, alcoholCount);
-
-                table.innerHTML = data.map(row => `
-                    <tr>
-                        <td>${row.name || '-'}</td>
-                        <td><span class="invite-code">${row.code}</span></td>
-                        <td><button onclick="copyInviteLink('${row.code}')" style="padding: 5px 10px; font-size: 12px;">Copia Link</button></td>
-                        <td><span class="status status-${row.status}">${row.status === 'pending' ? 'IN SOSPESO' : 'RISPOSTO'}</span></td>
-                        <td>${row.response_id ? (row.participating ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
-                        <td>${row.response_id ? (row.rosmarino ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
-                        <td>${row.response_id ? (row.eating ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
-                        <td>${row.response_id ? (row.alcohol ? '<span class="yes">SÌ</span>' : '<span class="no">NO</span>') : '-'}</td>
-                        <td>${row.submitted_at ? new Date(row.submitted_at + 'Z').toLocaleString('it-IT', { timeZone: 'Europe/Rome' }) : '-'}</td>
-                    </tr>
-                `).join('');
-            } catch (err) {
-                console.error('Error loading invites:', err);
-            }
-        }
-
-        function updateCounters(participating, rosmarino, eating, alcohol) {
-            document.getElementById('participatingCount').textContent = `(${participating})`;
-            document.getElementById('rosmarinoCount').textContent = `(${rosmarino})`;
-            document.getElementById('eatingCount').textContent = `(${eating})`;
-            document.getElementById('alcoholCount').textContent = `(${alcohol})`;
-        }
-
-        function copyInviteLink(code) {
-            const link = `${window.location.origin}/?invite=${code}`;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Link copiato negli appunti!');
-            }).catch(err => {
-                alert('Errore nel copiare il link: ' + err);
-            });
-        }
-
-        // Allow Enter key to login
-        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') adminLogin();
-        });
-
-        // Check for saved session on page load
-        window.addEventListener('load', () => {
-            const savedPassword = localStorage.getItem('adminPassword');
-            if (savedPassword) {
-                adminPassword = savedPassword;
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
-                loadInvites();
-            }
-
-            // Load invites every 5 seconds if logged in
-            setInterval(() => {
-                if (adminPassword) loadInvites();
-            }, 5000);
-        });
-    </script>
+    <script src="admin.js"></script>
 </body>
 
 </html>

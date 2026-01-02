@@ -115,6 +115,9 @@ fastify.get('/api/invite/:code', async (request, reply) => {
         } else if (row.status === 'responded') {
           reply.code(400);
           resolve({ error: 'Questo invito è già stato utilizzato' });
+        } else if (row.status === 'canceled') {
+          reply.code(400);
+          resolve({ error: 'Questo invito è stato revocato' });
         } else {
           resolve(row);
         }
@@ -126,7 +129,7 @@ fastify.get('/api/invite/:code', async (request, reply) => {
 // Submit response to invite
 fastify.post('/api/invite/:code/response', async (request, reply) => {
   const { code } = request.params;
-  const { participating, rosmarino, eating, alcohol } = request.body;
+  const { participating, rosmarino, eating, alcohol, sleep } = request.body;
 
   return new Promise((resolve, reject) => {
     // First get the invite
@@ -146,9 +149,9 @@ fastify.post('/api/invite/:code/response', async (request, reply) => {
         } else {
           // Insert response
           db.run(
-            `INSERT INTO responses (invite_id, participating, rosmarino, eating, alcohol)
-             VALUES (?, ?, ?, ?, ?)`,
-            [invite.id, participating ? 1 : 0, rosmarino ? 1 : 0, eating ? 1 : 0, alcohol ? 1 : 0],
+            `INSERT INTO responses (invite_id, participating, rosmarino, eating, alcohol, sleep)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [invite.id, participating ? 1 : 0, rosmarino ? 1 : 0, eating ? 1 : 0, alcohol ? 1 : 0, sleep ? 1 : 0],
             function(err) {
               if (err) {
                 reply.code(400);
@@ -204,6 +207,23 @@ fastify.get('/api/stats', async (request, reply) => {
   });
 });
 
+// Get public configuration
+fastify.get('/api/config', async (request, reply) => {
+  return new Promise((resolve, reject) => {
+    db.get(
+      'SELECT * FROM config WHERE id = 1',
+      (err, row) => {
+        if (err) {
+          reply.code(500);
+          resolve({ error: 'Errore nel recupero della configurazione: ' + err.message });
+        } else {
+          resolve(row || {});
+        }
+      }
+    );
+  });
+});
+
 // Admin: Get all invites and responses
 fastify.get('/api/admin/invites', async (request, reply) => {
   const password = request.headers['x-admin-password'];
@@ -214,7 +234,7 @@ fastify.get('/api/admin/invites', async (request, reply) => {
 
   return new Promise((resolve, reject) => {
     db.all(
-      `SELECT i.*, r.id as response_id, r.participating, r.rosmarino, r.eating, r.alcohol, r.submitted_at
+      `SELECT i.*, r.id as response_id, r.participating, r.rosmarino, r.eating, r.alcohol, r.sleep, r.submitted_at
        FROM invites i
        LEFT JOIN responses r ON i.id = r.invite_id
        ORDER BY i.created_at DESC`,
@@ -227,6 +247,120 @@ fastify.get('/api/admin/invites', async (request, reply) => {
         }
       }
     );
+  });
+});
+
+// Admin: Save configuration
+fastify.post('/api/admin/config', async (request, reply) => {
+  const password = request.headers['x-admin-password'];
+  if (password !== ADMIN_PASSWORD) {
+    reply.code(401);
+    return { error: 'Non autorizzato' };
+  }
+
+  const { eventName, eventTime, eventLocation, serviceFood, serviceSleep, serviceRosmarino, serviceAlcohol } = request.body;
+
+  return new Promise((resolve, reject) => {
+    db.run(
+      'INSERT OR REPLACE INTO config (id, eventName, eventTime, eventLocation, serviceFood, serviceSleep, serviceRosmarino, serviceAlcohol, updated_at) VALUES (1, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
+      [eventName, eventTime, eventLocation, serviceFood ? 1 : 0, serviceSleep ? 1 : 0, serviceRosmarino ? 1 : 0, serviceAlcohol ? 1 : 0],
+      function(err) {
+        if (err) {
+          reply.code(400);
+          resolve({ error: 'Errore nel salvare la configurazione: ' + err.message });
+        } else {
+          resolve({ success: true });
+        }
+      }
+    );
+  });
+});
+
+// Admin: Get configuration
+fastify.get('/api/admin/config', async (request, reply) => {
+  const password = request.headers['x-admin-password'];
+  if (password !== ADMIN_PASSWORD) {
+    reply.code(401);
+    return { error: 'Non autorizzato' };
+  }
+
+  return new Promise((resolve, reject) => {
+    db.get(
+      'SELECT * FROM config WHERE id = 1',
+      (err, row) => {
+        if (err) {
+          reply.code(500);
+          resolve({ error: 'Errore nel recupero della configurazione: ' + err.message });
+        } else {
+          resolve(row || {});
+        }
+      }
+    );
+  });
+});
+
+// Admin: Revoke invite
+fastify.post('/api/admin/revoke/:code', async (request, reply) => {
+  const password = request.headers['x-admin-password'];
+  if (password !== ADMIN_PASSWORD) {
+    reply.code(401);
+    return { error: 'Non autorizzato' };
+  }
+
+  const { code } = request.params;
+
+  return new Promise((resolve, reject) => {
+    db.run(
+      'UPDATE invites SET status = ? WHERE code = ? AND status = ?',
+      ['canceled', code, 'pending'],
+      function(err) {
+        if (err) {
+          reply.code(400);
+          resolve({ error: 'Errore nella revoca dell\'invito: ' + err.message });
+        } else if (this.changes === 0) {
+          reply.code(404);
+          resolve({ error: 'Invito non trovato o già utilizzato' });
+        } else {
+          resolve({ success: true });
+        }
+      }
+    );
+  });
+});
+
+// Admin: Reset everything
+fastify.post('/api/admin/reset', async (request, reply) => {
+  const password = request.headers['x-admin-password'];
+  if (password !== ADMIN_PASSWORD) {
+    reply.code(401);
+    return { error: 'Non autorizzato' };
+  }
+
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('DELETE FROM responses', (err) => {
+        if (err) {
+          reply.code(400);
+          resolve({ error: 'Errore nel reset: ' + err.message });
+          return;
+        }
+        db.run('DELETE FROM invites', (err) => {
+          if (err) {
+            reply.code(400);
+            resolve({ error: 'Errore nel reset: ' + err.message });
+            return;
+          }
+          db.run('DELETE FROM config', (err) => {
+            if (err) {
+              reply.code(400);
+              resolve({ error: 'Errore nel reset: ' + err.message });
+            } else {
+              resolve({ success: true });
+            }
+          });
+        });
+      });
+    });
   });
 });
 

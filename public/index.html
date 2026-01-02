@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capodanno Marco</title>
+    <title>Party Legacy</title>
     <style>
         * {
             margin: 0;
@@ -13,20 +13,20 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #000000;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .container {
-            background: #0f3460;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            background: #0a0a0a;
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid #1a1a1a;
             max-width: 600px;
             width: 100%;
         }
@@ -37,22 +37,25 @@
         }
 
         .welcome-section h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #00d4ff;
+            font-size: 2.5rem;
+            margin-bottom: 24px;
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         .event-info {
-            background: #1a1a2e;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 4px solid #00d4ff;
+            background: #111111;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border: 1px solid #1a1a1a;
         }
 
         .event-info p {
-            margin: 8px 0;
-            color: #b0b0b0;
+            margin: 12px 0;
+            color: #ffffff;
+            font-size: 1rem;
         }
 
         .questions-section {
@@ -65,7 +68,7 @@
         }
 
         .question.active {
-            display: block;
+            display: block !important;
             animation: slideIn 0.3s ease-out;
         }
 
@@ -130,27 +133,39 @@
 
         .code-input-group input {
             flex: 1;
-            padding: 12px;
+            padding: 16px 20px;
             font-size: 16px;
-            border: 2px solid #444;
-            border-radius: 6px;
-            background-color: #1a1a2e;
-            color: #e0e0e0;
+            border: 2px solid #1a1a1a;
+            border-radius: 12px;
+            background-color: #111111;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .code-input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
         }
 
         .code-input-group input::placeholder {
-            color: #888;
+            color: #666666;
         }
 
         .code-input-group button {
-            padding: 12px 20px;
-            background-color: #007bff;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
             border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
         }
 
         .code-input-group button:hover {
-            background-color: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
         }
 
         .error {
@@ -178,12 +193,17 @@
         }
 
         .invite-code-input h2 {
-            color: #00d4ff;
-            margin-bottom: 10px;
+            color: #ffffff;
+            margin-bottom: 16px;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
         }
 
         .invite-code-input p {
-            color: #b0b0b0;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         .progress {
@@ -214,18 +234,18 @@
         }
 
         .stats-box {
-            background: #1a1a2e;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #00d4ff;
+            background: #111111;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border: 1px solid #1a1a1a;
         }
 
         .stats-row {
             display: flex;
             justify-content: space-around;
-            gap: 15px;
-            margin-top: 10px;
+            gap: 20px;
+            margin-top: 16px;
         }
 
         .stat-item {
@@ -234,15 +254,16 @@
         }
 
         .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00d4ff;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
+            font-size: 0.875rem;
+            color: #666666;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -254,7 +275,7 @@
 
         <!-- Code Input Section -->
         <div class="invite-code-input">
-            <h2>🎉 Capodanno Marco</h2>
+            <h2>🎉 Party Legacy </h2>
             <p style="margin: 15px 0;">Per confermare la tua partecipazione, inserisci il codice di invito</p>
             <div class="code-input-group">
                 <input type="text" id="inviteCode" placeholder="Inserisci il codice di invito" maxlength="20">
@@ -264,16 +285,17 @@
 
         <!-- Welcome Section -->
         <div class="welcome-section" id="welcomeSection">
-            <h1>🎉 Capodanno Marco</h1>
+            <h1></h1>
             <h2>Sei stato invitato!</h2>
             <p style="margin: 10px;">Ciao <span id="guestName"></span></p>
-            <div class="event-info">
-                <p><strong>📅 Data:</strong> 31 dicembre 2025</p>
-                <p><strong>⏰ Orario:</strong> 20:00 - finchè reggiamo</p>
-                <p style="margin-top: 15px; font-size: 0.9em; color: #999;">Rispondi alle domande sottostanti</p>
+            <div class="event-info" id="eventInfo">
+                <p><strong>📅 Data:</strong> <span id="eventDate">Caricamento...</span></p>
+                <p><strong>⏰ Orario:</strong> <span id="eventTime">Caricamento...</span></p>
+                <p><strong>📍 Luogo:</strong> <span id="eventLocation">Caricamento...</span></p>
+                <p style="margin-top: 20px; font-size: 0.9em; color: #999;">Rispondi alle domande sottostanti</p>
             </div>
             <div class="stats-box" id="statsBox">
-                <p style="color: #b0b0b0; margin: 0; font-size: 12px;">Partecipanti</p>
+                <p style="color: #ffffff; margin: 0; font-size: 1rem; font-weight: 600; margin-bottom: 8px;">Partecipanti</p>
                 <div class="stats-row">
                     <div class="stat-item">
                         <div class="stat-number" id="statParticipating">-</div>
@@ -320,6 +342,14 @@
             </div>
 
             <div class="question" id="q4">
+                <h3>Vuoi dormire qui?</h3>
+                <div class="button-group">
+                    <button class="yes-btn" onclick="answerQuestion('sleep', true)">Sì</button>
+                    <button class="no-btn" onclick="answerQuestion('sleep', false)">No</button>
+                </div>
+            </div>
+
+            <div class="question" id="q5">
                 <h3>Vuoi bere alcol? <span style="font-size: 0.8em; color: #999;">(costo aggiuntivo)</span></h3>
                 <div class="button-group">
                     <button class="yes-btn" onclick="answerQuestion('alcohol', true)">Sì</button>
@@ -335,9 +365,10 @@
 
     <script>
         const responses = {};
-        const questions = ['participating', 'rosmarino', 'eating', 'alcohol'];
+        let questions = ['participating']; // Start with just participating, others will be added based on config
         let currentQuestion = 0;
         let inviteCode = null;
+        let serviceConfig = {};
 
         function showError(msg) {
             const el = document.getElementById('errorMsg');
@@ -355,6 +386,9 @@
 
         // Check for invite code in URL parameters on page load
         window.addEventListener('load', () => {
+            // Load config first
+            loadConfig();
+            
             const params = new URLSearchParams(window.location.search);
             const codeFromUrl = params.get('invite');
             if (codeFromUrl) {
@@ -380,6 +414,7 @@
                     document.querySelector('.invite-code-input').style.display = 'none';
                     document.getElementById('welcomeSection').style.display = 'block';
                     document.getElementById('questionsSection').style.display = 'block';
+                    await loadConfig(); // Load config to set up questions
                     loadStats();
                     setTimeout(() => showQuestion(0), 500);
                 } else {
@@ -387,6 +422,61 @@
                 }
             } catch (err) {
                 showError('Errore: ' + err.message);
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const data = await response.json();
+                
+                if (response.ok && data) {
+                    // Store service config
+                    serviceConfig = {
+                        food: data.serviceFood !== 0,
+                        sleep: data.serviceSleep !== 0,
+                        rosmarino: data.serviceRosmarino !== 0,
+                        alcohol: data.serviceAlcohol !== 0
+                    };
+                    
+                    // Build questions array based on enabled services
+                    questions = ['participating'];
+                    if (serviceConfig.rosmarino) questions.push('rosmarino');
+                    if (serviceConfig.food) questions.push('eating');
+                    if (serviceConfig.sleep) questions.push('sleep');
+                    if (serviceConfig.alcohol) questions.push('alcohol');
+                    
+                    // Hide ALL questions initially
+                    document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+                    
+                    if (data.eventName) {
+                        // Update event name in both sections
+                        document.querySelector('.invite-code-input h2').textContent = `🎉 ${data.eventName}`;
+                        document.querySelector('.welcome-section h1').textContent = `🎉 ${data.eventName}`;
+                    }
+                    
+                    // Update event details
+                    if (data.eventTime) {
+                        const eventDate = new Date(data.eventTime);
+                        document.getElementById('eventDate').textContent = eventDate.toLocaleDateString('it-IT');
+                        document.getElementById('eventTime').textContent = eventDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+                    }
+                    
+                    if (data.eventLocation) {
+                        document.getElementById('eventLocation').textContent = data.eventLocation;
+                    }
+                } else {
+                    // Keep default values if no config
+                    document.getElementById('eventDate').textContent = 'Da definire';
+                    document.getElementById('eventTime').textContent = 'Da definire';
+                    document.getElementById('eventLocation').textContent = 'Da definire';
+                }
+            } catch (err) {
+                console.error('Error loading config:', err);
+                // Keep default values on error
+                document.getElementById('eventDate').textContent = 'Da definire';
+                document.getElementById('eventTime').textContent = 'Da definire';
+                document.getElementById('eventLocation').textContent = 'Da definire';
             }
         }
 
@@ -408,12 +498,29 @@
         function showQuestion(index) {
             if (index < 0 || index >= questions.length) return;
 
-            // Hide previous questions
-            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            // Hide ALL questions first
+            document.querySelectorAll('.question').forEach(q => {
+                q.classList.remove('active');
+                q.style.display = 'none';
+            });
 
-            // Show current question
+            // Show current question based on questions array
             currentQuestion = index;
-            document.getElementById('q' + (index + 1)).classList.add('active');
+            const questionType = questions[index];
+            let questionElement;
+            
+            switch(questionType) {
+                case 'participating': questionElement = document.getElementById('q1'); break;
+                case 'rosmarino': questionElement = document.getElementById('q2'); break;
+                case 'eating': questionElement = document.getElementById('q3'); break;
+                case 'sleep': questionElement = document.getElementById('q4'); break;
+                case 'alcohol': questionElement = document.getElementById('q5'); break;
+            }
+            
+            if (questionElement) {
+                questionElement.style.display = 'block';
+                questionElement.classList.add('active');
+            }
 
             // Update progress
             document.getElementById('progress').textContent = `Domanda ${index + 1} di ${questions.length}`;
@@ -437,17 +544,23 @@
             
             // If first question (participating) is answered "No", fill all others with "No" and submit
             if (question === 'participating' && answer === false) {
-                responses['rosmarino'] = false;
-                responses['eating'] = false;
-                responses['alcohol'] = false;
+                // Set all other enabled services to false
+                if (serviceConfig.rosmarino) responses['rosmarino'] = false;
+                if (serviceConfig.food) responses['eating'] = false;
+                if (serviceConfig.sleep) responses['sleep'] = false;
+                if (serviceConfig.alcohol) responses['alcohol'] = false;
                 // Submit immediately
                 setTimeout(() => submitResponse(), 300);
                 return;
             }
             
-            // If on last question, check if all are answered and update submit button visibility
+            // If on last question, check if all are answered and submit automatically
             if (currentQuestion === questions.length - 1) {
-                updateSubmitButtonVisibility();
+                const allAnswered = questions.every(q => responses.hasOwnProperty(q));
+                if (allAnswered) {
+                    setTimeout(() => submitResponse(), 300);
+                    return;
+                }
             }
             
             // Move to next question if not the last one
@@ -458,16 +571,24 @@
 
         async function submitResponse() {
             try {
+                // Ensure all disabled services are set to false
+                const finalResponses = {
+                    participating: responses.participating || false,
+                    rosmarino: serviceConfig.rosmarino ? (responses.rosmarino || false) : false,
+                    eating: serviceConfig.food ? (responses.eating || false) : false,
+                    sleep: serviceConfig.sleep ? (responses.sleep || false) : false,
+                    alcohol: serviceConfig.alcohol ? (responses.alcohol || false) : false
+                };
+                
                 const response = await fetch(`/api/invite/${inviteCode}/response`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(responses)
+                    body: JSON.stringify(finalResponses)
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    showSuccess('✅ Risposta inviata con successo!');
                     setTimeout(() => {
                         document.getElementById('questionsSection').style.display = 'none';
                         document.getElementById('welcomeSection').innerHTML = '<h1>✅ Grazie!</h1><p>La tua risposta è stata registrata 🎉</p>';
